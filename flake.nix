@@ -7,19 +7,13 @@
 
   outputs = { self, nixpkgs }:
     let
-      supportedSystems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "aarch64-darwin"
-        "x86_64-darwin"
-      ];
-      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+      system = "aarch64-linux";
     in {
-      packages = forAllSystems (system: {
+      packages.${system} = {
         default = nixpkgs.legacyPackages.${system}.writeShellScriptBin "bun-now" ''
-          ${nixpkgs.legacyPackages.${system}.bun}/bin/bun -e 'console.log(Date.now())'
+          nix run github:nix-ontouchstart/bun -- -e 'console.log(Date.now())'
         '';
-      });
+      };
     };
 }
 
